@@ -121,7 +121,7 @@ initializeSession(async () => {
     await renderPage(document.body.dataset.page || "home");
   } catch (error) {
     console.error("Page rendering failed:", error);
-    await reportClientError(error);
+    void reportClientError(error);
     toast(error?.message || "Some page content could not be loaded.", "error");
   }
 });
@@ -135,7 +135,7 @@ if ("serviceWorker" in navigator && location.protocol.startsWith("http")) {
 }
 
 window.addEventListener("error", (event) => {
-  reportClientError(
+  void reportClientError(
     event.error || new Error(event.message || "Unknown browser error")
   );
 });
@@ -145,5 +145,5 @@ window.addEventListener("unhandledrejection", (event) => {
     event.reason instanceof Error
       ? event.reason
       : new Error(String(event.reason));
-  reportClientError(error);
+  void reportClientError(error);
 });

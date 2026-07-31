@@ -134,7 +134,48 @@ export async function adminSaveCategory(c){const id=c.id||slugify(c.name),data={
 export async function adminSavePlan(p){const id=p.id||slugify(p.name),data={id,name:p.name,price:Number(p.price),listing_limit:Number(p.listingLimit),fee_percent:Number(p.feePercent||0),featured_limit:Number(p.featuredLimit||0),badge:p.badge||p.name,benefits:p.benefits||[],active:p.active!==false};if(!isSupabaseConfigured)return id;check((await supabase.from(table("membershipPlans")).upsert(data)).error);return id}
 export async function adminSaveSettings(s){if(!isSupabaseConfigured){write("dhiexpress-demo-settings",s);return}check((await supabase.from(table("settings")).upsert({id:"public",value:s,public:true,updated_by:uid(),updated_at:now()})).error)}
 export async function getPublicSettings(){if(!isSupabaseConfigured)return read("dhiexpress-demo-settings",{cashOnDelivery:true,bankTransfer:true,bankName:"",bankAccountName:"",bankAccountNumber:"",onlinePayment:appConfig.onlinePaymentEnabled,maintenanceMode:false});const r=await one("settings","public");return r?.value||{}}
-export async function reportClientError(error){console.error(error);if(!isSupabaseConfigured||!state.user)return;try{await supabase.from(table("clientErrors")).insert({id:crypto.randomUUID(),user_id:uid(),message:String(error?.message||error),page:location.href,created_at:now()})}catch{}}
+export async function reportClientError(error) {
+  const normalizedError =
+    error instanceof Error
+      ? error
+      : new Error(String(error || "Unknown application error"));
+
+  console.error("DhiExpress error:", normalizedError);
+
+  if (!isSupabaseConfigured || !supabase) {
+    return;
+  }
+
+  try {
+    const {
+      data: { user }
+    } = await supabase.auth.getUser();
+
+    const payload = {
+      id: crypto.randomUUID(),
+      user_id: user?.id || null,
+      message: String(
+        normalizedError.message || "Unknown application error"
+      ).slice(0, 5000),
+      page: String(location.href || "").slice(0, 2000),
+      created_at: now()
+    };
+
+    const { error: loggingError } = await supabase
+      .from(table("clientErrors"))
+      .insert(payload);
+
+    if (loggingError) {
+      console.warn(
+        "Could not save client error report:",
+        loggingError.message
+      );
+    }
+  } catch (loggingError) {
+    // Error reporting must never hide or replace the original page error.
+    console.warn("Client error reporting failed:", loggingError);
+  }
+}
 export async function adminSendAnnouncement(title,message){if(!isSupabaseConfigured){const a=read("dhiexpress-demo-announcements",[]);a.unshift({id:`a-${Date.now()}`,title,message,active:true,createdAt:now()});write("dhiexpress-demo-announcements",a);return}check((await supabase.from(table("announcements")).insert({id:crypto.randomUUID(),title,message,audience:"all",active:true,created_by:uid(),created_at:now()})).error)}
 export async function adminDeleteUserAccount(){throw new Error("Deleting Auth users requires the optional Supabase Edge Function. See docs/EDGE_FUNCTIONS.md.")}
 export async function seedDatabase(){if(!isSupabaseConfigured)return;for(const c of categorySeed)await adminSaveCategory(c);for(const p of planSeed)await adminSavePlan(p);return true}

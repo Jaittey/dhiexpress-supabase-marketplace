@@ -27,7 +27,9 @@ export const appConfig = {
     settings: "settings",
     announcements: "announcements",
     userLists: "user_lists",
-    clientErrors: "client_errors"
+    clientErrors: "client_errors",
+    // Compatibility alias used by the current admin dashboard.
+    errorLogs: "client_errors"
   },
 
   buckets: {
