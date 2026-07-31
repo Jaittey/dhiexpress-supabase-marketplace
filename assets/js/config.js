@@ -1,6 +1,6 @@
 // DhiExpress Supabase configuration.
-// These browser values are public.
-// NEVER add the service_role key, database password, or private secrets here.
+// The project URL and publishable key are safe to use in browser applications.
+// NEVER place the service_role key, database password, JWT secret, or other private secrets here.
 
 export const appConfig = {
   supabase: {

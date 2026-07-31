@@ -9,6 +9,15 @@ const read=(k,f)=>{try{return JSON.parse(localStorage.getItem(k))??f}catch{retur
 const write=(k,v)=>localStorage.setItem(k,JSON.stringify(v));
 const now=()=>new Date().toISOString();
 const uid=()=>state.user?.id||state.user?.uid;
+const normalizeAuthUser=(user)=>{
+  if(!user)return null;
+  return {
+    ...user,
+    uid:user.id,
+    displayName:user.user_metadata?.display_name||user.user_metadata?.full_name||user.email?.split("@")[0]||"Account",
+    photoURL:user.user_metadata?.avatar_url||""
+  };
+};
 const table=n=>appConfig.tables[n]||n;
 const assertUser=()=>{if(!state.user)throw new Error("Please sign in.")};
 const check=(error)=>{if(error)throw error};
@@ -22,7 +31,37 @@ async function loadProfile(user){const {data,error}=await supabase.from(table("u
 async function hydrateLists(){if(!state.user)return;const {data}=await supabase.from(table("userLists")).select("type,items").eq("user_id",uid());for(const r of data||[]){if(r.type==="cart")write(K.cart,r.items||[]);if(r.type==="wishlist")write(K.wishlist,r.items||[]);if(r.type==="recent")write(K.recent,r.items||[])}}
 async function syncList(type,items){if(!isSupabaseConfigured||!state.user)return;await supabase.from(table("userLists")).upsert({user_id:uid(),type,items,updated_at:now()},{onConflict:"user_id,type"})}
 
-export async function initializeSession(cb){if(!isSupabaseConfigured){const p=read(K.user,null);state.user=p?{id:p.uid,uid:p.uid,email:p.email,user_metadata:{display_name:p.displayName}}:null;state.profile=p;state.ready=true;cb?.(state);return()=>{}}const {data:{session}}=await supabase.auth.getSession();state.user=session?.user||null;state.profile=state.user?await loadProfile(state.user):null;if(state.user)await hydrateLists();state.ready=true;cb?.(state);const {data:{subscription}}=supabase.auth.onAuthStateChange(async(_event,session2)=>{state.user=session2?.user||null;state.profile=state.user?await loadProfile(state.user):null;cb?.(state)});return()=>subscription.unsubscribe()}
+export async function initializeSession(cb){
+  if(!isSupabaseConfigured){
+    const p=read(K.user,null);
+    state.user=p?{id:p.uid,uid:p.uid,email:p.email,displayName:p.displayName,user_metadata:{display_name:p.displayName}}:null;
+    state.profile=p;
+    state.ready=true;
+    cb?.(state);
+    return()=>{};
+  }
+
+  const {data:{session},error}=await supabase.auth.getSession();
+  check(error);
+  state.user=normalizeAuthUser(session?.user||null);
+  state.profile=state.user?await loadProfile(state.user):null;
+  if(state.user)await hydrateLists();
+  state.ready=true;
+  cb?.(state);
+
+  const {data:{subscription}}=supabase.auth.onAuthStateChange(async(_event,nextSession)=>{
+    try{
+      state.user=normalizeAuthUser(nextSession?.user||null);
+      state.profile=state.user?await loadProfile(state.user):null;
+      if(state.user)await hydrateLists();
+      cb?.(state);
+    }catch(error){
+      console.error("Session refresh failed:",error);
+    }
+  });
+
+  return()=>subscription.unsubscribe();
+}
 export async function signUpEmail({displayName,email,password}){if(!isSupabaseConfigured)return demoSignIn("user",displayName,email);const {data,error}=await supabase.auth.signUp({email,password,options:{data:{display_name:displayName},emailRedirectTo:`${location.origin}/verify-email.html`}});check(error);return data.user}
 export async function signInEmail(email,password){if(!isSupabaseConfigured)return demoSignIn(email.toLowerCase().includes("admin")?"admin":"user",email.split("@")[0],email);const {data,error}=await supabase.auth.signInWithPassword({email,password});check(error);return data.user}
 export async function signInGoogle(){if(!isSupabaseConfigured)return demoSignIn("user","Google Demo User","demo@dhiexpress.mv");const {error}=await supabase.auth.signInWithOAuth({provider:"google",options:{redirectTo:`${location.origin}/dashboard.html`}});check(error)}
@@ -53,7 +92,25 @@ export async function toggleWishlist(productId){let a=getWishlist();a=a.includes
 export function getRecentlyViewed(){return read(K.recent,[])}
 export async function recordRecentlyViewed(productId){const a=[productId,...getRecentlyViewed().filter(x=>x!==productId)].slice(0,12);write(K.recent,a);await syncList("recent",a)}
 export async function createOrder(data){assertUser();const cart=getCart();if(!cart.length)throw new Error("Your cart is empty.");if(!isSupabaseConfigured){const products=await Promise.all(cart.map(x=>getProduct(x.productId)));const items=cart.map((x,i)=>({productId:x.productId,quantity:x.quantity,name:products[i]?.name||"Product",price:Number(products[i]?.discountPrice||products[i]?.price||0),sellerId:products[i]?.sellerId}));const subtotal=items.reduce((s,x)=>s+x.price*x.quantity,0),id=`order-${Date.now()}`,o={id,orderNumber:`DHI-${Date.now()}`,buyerId:uid(),buyerName:state.profile?.displayName||"Customer",buyerEmail:state.user.email,items,subtotal,deliveryFee:Number(data.deliveryFee||0),total:subtotal+Number(data.deliveryFee||0),currency:"MVR",status:"pending",paymentMethod:data.paymentMethod,paymentStatus:"pending",shippingAddress:data.shippingAddress,phone:data.phone,notes:data.notes||"",createdAt:now(),updatedAt:now()};const a=read(K.orders,[]);a.unshift(o);write(K.orders,a);await clearCart();return id}const {data:r,error}=await supabase.rpc("create_marketplace_order",{p_cart:cart,p_shipping_address:data.shippingAddress,p_phone:data.phone,p_notes:data.notes||"",p_payment_method:data.paymentMethod||"cash_on_delivery",p_delivery_fee:Number(data.deliveryFee||0),p_bank_reference:data.bankReference||""});check(error);await clearCart();return r}
-export async function getOrders(){assertUser();return isSupabaseConfigured?many("orders",q=>q.eq("buyer_id",uid()).order("created_at",{ascending:false})):read(K.orders,[])}
+export async function getOrders(scope="buyer"){
+  assertUser();
+  if(!isSupabaseConfigured){
+    const rows=read(K.orders,[]);
+    return scope==="seller"?rows.filter(order=>(order.items||[]).some(item=>item.sellerId===uid())):rows;
+  }
+
+  const orders=await many("orders",q=>{
+    const filtered=scope==="seller"?q.contains("seller_ids",[uid()]):q.eq("buyer_id",uid());
+    return filtered.order("created_at",{ascending:false});
+  });
+
+  if(scope==="seller"){
+    for(const order of orders){
+      order.items=await many("orderItems",q=>q.eq("order_id",order.id).eq("seller_id",uid()));
+    }
+  }
+  return orders;
+}
 export async function getOrder(id){const o=isSupabaseConfigured?await one("orders",id):read(K.orders,[]).find(x=>x.id===id);if(isSupabaseConfigured&&o){const items=await many("orderItems",q=>q.eq("order_id",id));o.items=items}return o}
 export async function updateOrderStatus(id,status){if(!isSupabaseConfigured){const a=read(K.orders,[]),o=a.find(x=>x.id===id);if(o)o.status=status;write(K.orders,a);return}check((await supabase.from(table("orders")).update({status,updated_at:now()}).eq("id",id)).error)}
 export async function addReview({productId,rating,comment}){assertUser();const r={productId,userId:uid(),userName:state.profile?.displayName||"Customer",rating:Number(rating),comment,status:"approved",createdAt:now()};if(!isSupabaseConfigured){const a=read(`reviews-${productId}`,[]);a.unshift({id:`r-${Date.now()}`,...r});write(`reviews-${productId}`,a);return}check((await supabase.from(table("reviews")).insert(dbRow({...r,id:crypto.randomUUID()}))).error)}
