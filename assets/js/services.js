@@ -64,7 +64,28 @@ export async function initializeSession(cb){
 }
 export async function signUpEmail({displayName,email,password}){if(!isSupabaseConfigured)return demoSignIn("user",displayName,email);const {data,error}=await supabase.auth.signUp({email,password,options:{data:{display_name:displayName},emailRedirectTo:`${location.origin}/verify-email.html`}});check(error);return data.user}
 export async function signInEmail(email,password){if(!isSupabaseConfigured)return demoSignIn(email.toLowerCase().includes("admin")?"admin":"user",email.split("@")[0],email);const {data,error}=await supabase.auth.signInWithPassword({email,password});check(error);return data.user}
-export async function signInGoogle(){if(!isSupabaseConfigured)return demoSignIn("user","Google Demo User","demo@dhiexpress.mv");const {error}=await supabase.auth.signInWithOAuth({provider:"google",options:{redirectTo:`${location.origin}/dashboard.html`}});check(error)}
+export async function signInGoogle() {
+  if (!isSupabaseConfigured || !supabase) {
+    return demoSignIn("user", "Google Demo User", "demo@dhiexpress.mv");
+  }
+
+  const redirectTo = `${window.location.origin}/dashboard.html`;
+
+  const { data, error } = await supabase.auth.signInWithOAuth({
+    provider: "google",
+    options: {
+      redirectTo,
+      skipBrowserRedirect: false,
+      queryParams: {
+        access_type: "offline",
+        prompt: "select_account"
+      }
+    }
+  });
+
+  check(error);
+  return data;
+}
 export async function resetPassword(email){if(!isSupabaseConfigured)return true;const {error}=await supabase.auth.resetPasswordForEmail(email,{redirectTo:`${location.origin}/reset-password.html`});check(error);return true}
 export async function resendVerification(){if(!isSupabaseConfigured||!state.user)return;const {error}=await supabase.auth.resend({type:"signup",email:state.user.email,options:{emailRedirectTo:`${location.origin}/verify-email.html`}});check(error)}
 export async function logout(){if(!isSupabaseConfigured)localStorage.removeItem(K.user);else check((await supabase.auth.signOut()).error);state.user=null;state.profile=null}

@@ -1,4 +1,4 @@
-const CACHE = "dhiexpress-supabase-v3";
+const CACHE = "dhiexpress-supabase-v4";
 const CORE = [
   "./",
   "./index.html",
