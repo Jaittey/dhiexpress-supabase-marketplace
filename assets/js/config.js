@@ -4,7 +4,7 @@
 export const appConfig = {
   supabase: {
     url: "https://ccppmnukjmihtxfwqpeq.supabase.co",
-    anonKey: "sb_publishable_ZSpyb9k4KAUm5RBpUZMLvA_CGVRJBH9"
+    anonKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNjcHBtbnVram1paHR4ZndxcGVxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODU1MDE1OTYsImV4cCI6MjEwMTA3NzU5Nn0.1flgby8JtnVTD8aBoYHCue2i8citqiMAjZR4lF6An8w"
   },
   tables: {
     users: "profiles",
