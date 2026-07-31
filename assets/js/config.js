@@ -1,6 +1,6 @@
 // DhiExpress Supabase configuration.
-// The project URL and publishable/anon key are safe to use in browser apps.
-// NEVER put the service_role key or other private secrets here.
+// The project URL and publishable key are safe for browser applications.
+// NEVER place the service_role key, database password or private secrets here.
 
 export const appConfig = {
   supabase: {
@@ -47,8 +47,8 @@ export const appConfig = {
   onlinePaymentEnabled: false
 };
 
-// Check whether Supabase is configured.
-// Only verifies that the values are present.
 export const isSupabaseConfigured =
-  appConfig.supabase.url.trim().length > 0 &&
-  appConfig.supabase.anonKey.trim().length > 0;
+  Boolean(appConfig.supabase.url?.trim()) &&
+  Boolean(appConfig.supabase.anonKey?.trim()) &&
+  !appConfig.supabase.url.includes("YOUR_PROJECT_REF") &&
+  !appConfig.supabase.anonKey.includes("YOUR_SUPABASE");
