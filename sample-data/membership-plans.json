@@ -1,0 +1,29 @@
+[
+  {
+    "id": "bronze",
+    "name": "Bronze",
+    "price": 99,
+    "listingLimit": 10,
+    "feePercent": 8,
+    "featuredLimit": 0,
+    "active": true
+  },
+  {
+    "id": "silver",
+    "name": "Silver",
+    "price": 249,
+    "listingLimit": 75,
+    "feePercent": 5,
+    "featuredLimit": 0,
+    "active": true
+  },
+  {
+    "id": "gold",
+    "name": "Gold",
+    "price": 499,
+    "listingLimit": 500,
+    "feePercent": 2,
+    "featuredLimit": 15,
+    "active": true
+  }
+]

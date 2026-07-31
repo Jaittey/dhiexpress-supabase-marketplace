@@ -1,0 +1,114 @@
+[
+  {
+    "id": "electronics",
+    "name": "Electronics",
+    "icon": "fa-tv",
+    "active": true,
+    "sortOrder": 0
+  },
+  {
+    "id": "mobile-phones",
+    "name": "Mobile Phones",
+    "icon": "fa-mobile-screen-button",
+    "active": true,
+    "sortOrder": 1
+  },
+  {
+    "id": "computers",
+    "name": "Computers",
+    "icon": "fa-laptop",
+    "active": true,
+    "sortOrder": 2
+  },
+  {
+    "id": "fashion",
+    "name": "Fashion",
+    "icon": "fa-shirt",
+    "active": true,
+    "sortOrder": 3
+  },
+  {
+    "id": "beauty",
+    "name": "Beauty",
+    "icon": "fa-spa",
+    "active": true,
+    "sortOrder": 4
+  },
+  {
+    "id": "home-furniture",
+    "name": "Home and Furniture",
+    "icon": "fa-couch",
+    "active": true,
+    "sortOrder": 5
+  },
+  {
+    "id": "vehicles",
+    "name": "Vehicles",
+    "icon": "fa-car",
+    "active": true,
+    "sortOrder": 6
+  },
+  {
+    "id": "auto-parts",
+    "name": "Auto Parts",
+    "icon": "fa-gears",
+    "active": true,
+    "sortOrder": 7
+  },
+  {
+    "id": "food-drinks",
+    "name": "Food and Drinks",
+    "icon": "fa-burger",
+    "active": true,
+    "sortOrder": 8
+  },
+  {
+    "id": "sports",
+    "name": "Sports",
+    "icon": "fa-futbol",
+    "active": true,
+    "sortOrder": 9
+  },
+  {
+    "id": "books",
+    "name": "Books",
+    "icon": "fa-book",
+    "active": true,
+    "sortOrder": 10
+  },
+  {
+    "id": "toys",
+    "name": "Toys",
+    "icon": "fa-puzzle-piece",
+    "active": true,
+    "sortOrder": 11
+  },
+  {
+    "id": "health",
+    "name": "Health",
+    "icon": "fa-heart-pulse",
+    "active": true,
+    "sortOrder": 12
+  },
+  {
+    "id": "services",
+    "name": "Services",
+    "icon": "fa-screwdriver-wrench",
+    "active": true,
+    "sortOrder": 13
+  },
+  {
+    "id": "property",
+    "name": "Property",
+    "icon": "fa-building",
+    "active": true,
+    "sortOrder": 14
+  },
+  {
+    "id": "other",
+    "name": "Other",
+    "icon": "fa-layer-group",
+    "active": true,
+    "sortOrder": 15
+  }
+]

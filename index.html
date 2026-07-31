@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="description" content="Buy and sell products and services across Maldives.">
+  <meta name="theme-color" content="#1769ff">
+  <title>DhiExpress · Buy and Sell Across Maldives</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="assets/icons/icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body data-page="home">
+  <a class="skip-link" href="#pageRoot">Skip to content</a>
+  
+<header class="site-header" id="siteHeader">
+  <div class="nav-wrap">
+    <a class="brand" href="index.html" aria-label="DhiExpress home">
+      <span class="brand-mark" aria-hidden="true"><i class="fa-solid fa-bolt"></i></span>
+      <span>Dhi<span>Express</span></span>
+    </a>
+    <button class="icon-btn mobile-menu-btn" id="mobileMenuBtn" aria-label="Open navigation" aria-expanded="false"><i class="fa-solid fa-bars"></i></button>
+    <nav class="main-nav" id="mainNav" aria-label="Main navigation">
+      <a href="index.html" data-nav="home"><i class="fa-solid fa-house"></i><span>Home</span></a>
+      <a href="search.html" data-nav="market"><i class="fa-solid fa-store"></i><span>Marketplace</span></a>
+      <a href="categories.html" data-nav="categories"><i class="fa-solid fa-layer-group"></i><span>Categories</span></a>
+      <a href="membership.html" data-nav="membership"><i class="fa-solid fa-crown"></i><span>Plans</span></a>
+      <a href="add-product.html" class="sell-link" data-auth-only><i class="fa-solid fa-circle-plus"></i><span>Sell</span></a>
+    </nav>
+    <div class="nav-actions">
+      <a class="icon-btn count-button" href="wishlist.html" aria-label="Wishlist"><i class="fa-regular fa-heart"></i><span class="count-badge" id="wishlistCount">0</span></a>
+      <a class="icon-btn count-button" href="cart.html" aria-label="Shopping cart"><i class="fa-solid fa-cart-shopping"></i><span class="count-badge" id="cartCount">0</span></a>
+      <button class="icon-btn" id="themeToggle" aria-label="Toggle theme"><i class="fa-regular fa-moon"></i></button>
+      <div class="auth-nav" id="authNav">
+        <a href="login.html" class="btn btn-ghost btn-sm" data-guest-only>Login</a>
+        <a href="signup.html" class="btn btn-primary btn-sm" data-guest-only>Sign Up</a>
+        <button class="profile-trigger" id="profileTrigger" data-auth-only aria-haspopup="true" aria-expanded="false">
+          <span class="avatar" id="navAvatar">U</span><span class="profile-name" id="navUserName">Account</span><i class="fa-solid fa-chevron-down"></i>
+        </button>
+        <div class="profile-menu" id="profileMenu" data-auth-only>
+          <a href="dashboard.html"><i class="fa-solid fa-gauge"></i> Dashboard</a>
+          <a href="profile.html"><i class="fa-solid fa-user"></i> Profile</a>
+          <a href="orders.html"><i class="fa-solid fa-box"></i> Orders</a>
+          <a href="seller-dashboard.html" data-seller-only><i class="fa-solid fa-shop"></i> Seller Dashboard</a>
+          <a href="admin.html" data-admin-only><i class="fa-solid fa-shield-halved"></i> Admin</a>
+          <button id="logoutBtn"><i class="fa-solid fa-right-from-bracket"></i> Logout</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+  <div class="configuration-banner hidden" id="configurationBanner"></div>
+  <main id="pageRoot" class="page-root" tabindex="-1">
+    <section class="loading-screen" aria-live="polite"><span class="loader"></span><p>Loading DhiExpress…</p></section>
+  </main>
+  
+<footer class="site-footer">
+  <div class="footer-grid">
+    <div><a class="brand footer-brand" href="index.html"><span class="brand-mark"><i class="fa-solid fa-bolt"></i></span><span>Dhi<span>Express</span></span></a><p>Maldives' modern B2C and C2C marketplace. Buy local, sell confidently.</p></div>
+    <div><h4>Marketplace</h4><a href="search.html">Browse products</a><a href="categories.html">Categories</a><a href="membership.html">Seller plans</a><a href="support.html">Help centre</a></div>
+    <div><h4>Account</h4><a href="dashboard.html">Dashboard</a><a href="orders.html">Orders</a><a href="wishlist.html">Wishlist</a><a href="messages.html">Messages</a></div>
+    <div><h4>Legal</h4><a href="terms.html">Terms and Conditions</a><a href="privacy.html">Privacy Policy</a><a href="support.html">Report a problem</a><span class="currency-note">Default currency: MVR</span></div>
+  </div>
+  <div class="footer-bottom"><span>© 2026 DhiExpress. All rights reserved.</span><span>Built for desktop, tablet, Android and iPhone.</span></div>
+</footer>
+  <div class="toast-stack" id="toastStack" aria-live="polite" aria-atomic="true"></div>
+  <div class="modal-backdrop hidden" id="modalBackdrop"><div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle"><button class="modal-close" id="modalClose" aria-label="Close"><i class="fa-solid fa-xmark"></i></button><div id="modalContent"></div></div></div>
+  <script type="module" src="assets/js/app.js"></script>
+</body>
+</html>

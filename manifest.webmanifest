@@ -1,0 +1,9 @@
+{
+  "name": "DhiExpress Marketplace",
+  "short_name": "DhiExpress",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#f6f8fc",
+  "theme_color": "#1769ff",
+  "icons": [{"src":"assets/icons/icon.svg","sizes":"any","type":"image/svg+xml","purpose":"any maskable"}]
+}
