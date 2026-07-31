@@ -1,11 +1,13 @@
 // DhiExpress Supabase configuration.
-// The project URL and anon key are designed to be public in browser apps.
-// NEVER place the service_role key or other private secrets in this file.
+// The project URL and publishable/anon key are safe to use in browser apps.
+// NEVER put the service_role key or other private secrets here.
+
 export const appConfig = {
   supabase: {
     url: "https://ccppmnukjmihtxfwqpeq.supabase.co",
-    anonKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNjcHBtbnVram1paHR4ZndxcGVxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODU1MDE1OTYsImV4cCI6MjEwMTA3NzU5Nn0.1flgby8JtnVTD8aBoYHCue2i8citqiMAjZR4lF6An8w"
+    anonKey: "sb_publishable_ZSpyb9k4KAUm5RBpUZMLvA_CGVRJBH9"
   },
+
   tables: {
     users: "profiles",
     sellerProfiles: "seller_profiles",
@@ -27,21 +29,26 @@ export const appConfig = {
     userLists: "user_lists",
     clientErrors: "client_errors"
   },
+
   buckets: {
     productImages: "product-images",
     profileImages: "profile-images",
     paymentProofs: "payment-proofs",
     sellerDocuments: "seller-documents"
   },
+
   company: {
     name: "DhiExpress",
     currency: "MVR",
     country: "Maldives",
-    supportEmail: "support@example.com"
+    supportEmail: "jaeitte@gmail.com"
   },
+
   onlinePaymentEnabled: false
 };
 
-export const isSupabaseConfigured = Boolean(appConfig.supabase.url && appConfig.supabase.anonKey)
-  && !appConfig.supabase.url.includes("https://ccppmnukjmihtxfwqpeq.supabase.co")
-  && !appConfig.supabase.anonKey.includes("sb_publishable_ZSpyb9k4KAUm5RBpUZMLvA_CGVRJBH9");
+// Check whether Supabase is configured.
+// Only verifies that the values are present.
+export const isSupabaseConfigured =
+  appConfig.supabase.url.trim().length > 0 &&
+  appConfig.supabase.anonKey.trim().length > 0;
